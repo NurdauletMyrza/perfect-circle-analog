@@ -367,7 +367,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -386,7 +386,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: Draw a circle
 --- !u!222 &424900562
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -910,7 +910,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1582,7 +1582,8 @@ MonoBehaviour:
   mutedSprite: {fileID: 21300000, guid: 8cdeee773ad1c384eb50d533b65eae69, type: 3}
   unmutedSprite: {fileID: 21300000, guid: 9c5dc4cb33cbb254ea6e646892590d38, type: 3}
   goButton: {fileID: 1976122057}
-  startText: {fileID: 0}
+  startText: {fileID: 1933886756}
+  hintText: {fileID: 1773816326}
 --- !u!4 &2094203276
 Transform:
   m_ObjectHideFlags: 0

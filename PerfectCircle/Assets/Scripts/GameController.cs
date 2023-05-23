@@ -18,6 +18,15 @@ public class GameController : MonoBehaviour
     public Button goButton;
     public GameObject startText;
     public GameObject hintText;
+    public bool isStarted = false;
+
+    public GameObject linePrefab;
+    Line activeLine;
+    Line oldLine = null;
+
+    private float bestScore = 0.0f;
+    private float newScore = 0.0f;
+    private Vector2 center = new Vector2(10.0f, 10.0f);
 
 
     // Start is called before the first frame update
@@ -35,7 +44,31 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetMouseButtonDown(0) && isStarted)
+        {
+            if (oldLine != null)
+            {
+                oldLine.RemoveLine();
+            }
+            GameObject newLine = Instantiate(linePrefab);
+            activeLine = newLine.GetComponent<Line>();
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            oldLine = activeLine;
+            activeLine = null;
+        }
+
+        if (activeLine != null)
+        {
+            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            activeLine.UpdateLine(mousePosition);
+            Vector2 v2 = mousePosition - center;
+            float angle = Mathf.Atan2(v2.y, v2.x);
+            Debug.Log(angle);
+            // Debug.Log(Vector2.Distance(mousePosition, center));
+        }
     }
 
     void ShowInfoText()
@@ -64,6 +97,7 @@ public class GameController : MonoBehaviour
 
     void StartGame()
     {
+        isStarted = true;
         goButton.enabled = false;
         StartCoroutine(TextDotMoves());
         goButton.gameObject.transform.GetChild(0).gameObject.SetActive(false);
