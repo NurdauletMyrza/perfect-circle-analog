@@ -24,9 +24,21 @@ public class GameController : MonoBehaviour
     Line activeLine;
     Line oldLine = null;
 
+    public int level = 2;
     private float bestScore = 0.0f;
-    private float newScore = 0.0f;
+    private float newScore = 100.0f;
     private Vector2 center = new Vector2(10.0f, 10.0f);
+    private float initialRadius = 0.0f;
+    private float currentRadius = 0.0f;
+    private float initialAngle = 0.0f;
+    private float currentAngle = 0.0f;
+    private int dimension = 0; //if value 1 clockwise, if value -1 unclockwise
+    private float deltaSum;
+    private long counter;
+
+    public GameObject scoreText;
+    public Text scoreText1;
+    public Text scoreText2;
 
 
     // Start is called before the first frame update
@@ -39,6 +51,9 @@ public class GameController : MonoBehaviour
         soundImage = soundControl.gameObject.GetComponent<Image>();
 
         goButton.onClick.AddListener(StartGame);
+
+        scoreText1 = scoreText.transform.GetChild(0).gameObject.GetComponent<Text>();
+        scoreText2 = scoreText.transform.GetChild(1).gameObject.GetComponent<Text>();
     }
 
     // Update is called once per frame
@@ -46,28 +61,69 @@ public class GameController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && isStarted)
         {
+            hintText.SetActive(false);
+            scoreText.SetActive(true);
             if (oldLine != null)
             {
                 oldLine.RemoveLine();
             }
             GameObject newLine = Instantiate(linePrefab);
             activeLine = newLine.GetComponent<Line>();
+
+            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 v2 = mousePosition - center;
+            currentAngle = (initialAngle = Mathf.Atan2(v2.y, v2.x));
+            initialRadius = Vector2.Distance(mousePosition, center);
         }
 
         if (Input.GetMouseButtonUp(0))
         {
             oldLine = activeLine;
             activeLine = null;
-        }
+        }    
+    }
 
-        if (activeLine != null)
+    void FixedUpdate()
+    {
+    if (activeLine != null)
         {
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             activeLine.UpdateLine(mousePosition);
             Vector2 v2 = mousePosition - center;
             float angle = Mathf.Atan2(v2.y, v2.x);
-            Debug.Log(angle);
-            // Debug.Log(Vector2.Distance(mousePosition, center));
+            if (dimension == 0)
+            {
+                if (initialAngle - angle > 0)
+                {
+                    dimension = 1;
+                }
+                else if (initialAngle - angle < 0)
+                {
+                    dimension = -1;
+                }
+                Debug.Log(dimension);
+            }
+            float deltaAngle = currentAngle - angle;
+            if (Mathf.Abs(deltaAngle) > 0.01f)
+            {
+                if (deltaAngle * dimension > 0 || Mathf.Abs(deltaAngle) > 6)
+                {
+                    currentAngle = angle;
+                    float delta = Mathf.Abs(Vector2.Distance(mousePosition, center) - initialRadius);
+                    deltaSum += delta;
+                    counter++;
+                    newScore = (initialRadius - deltaSum / counter * (0.75f + level * 0.25f)) / initialRadius * 100;
+                    Debug.Log(newScore);
+                    scoreText1.text = ((int)newScore).ToString();
+                    scoreText2.text = ((int)(newScore * 10 % 10)).ToString() + "%";
+                }
+                else
+                {
+                    oldLine = activeLine;
+                    activeLine = null;
+                    dimension = 0;
+                }
+            }
         }
     }
 
